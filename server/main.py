@@ -27,7 +27,7 @@ async def websocket_endpoint(websocket: WebSocket):
             try:
                 audio_bytes = message
                 with tempfile.NamedTemporaryFile(
-                    suffix=".wav", delete=True
+                    suffix=".ogg", delete=True
                 ) as audio_chunk:
                     audio_chunk.write(audio_bytes)
                     audio_chunk.flush()
