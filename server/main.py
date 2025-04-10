@@ -37,6 +37,6 @@ async def websocket_endpoint(websocket: WebSocket):
                         )
                     )
                     transcription = whisper.transcribe(model, audio)
-                    websocket.send(trascription)
+                    websocket.send(transcription)
             except Exception as e:
                 print(e)
