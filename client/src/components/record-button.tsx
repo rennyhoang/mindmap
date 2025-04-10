@@ -1,13 +1,22 @@
 import { useState } from 'react';
+import { Button } from '@/components/ui/button'
 
 function RecordButton() {
     const [transcript, setTranscript] = useState("");
+    const [recording, setRecording] = useState(false);
+    const socket = new WebSocket("http://localhost:8080");
 
     function startRecording() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({audio: true}).then(
                 (stream) => {
                     const mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = (e) => {
+                        if (socket.OPEN) {
+                            const audio_chunk = new Blob([e.data], { type: "audio/ogg; codecs=opus"})
+                            socket.send(audio_chunk)
+                        }
+                    };
                     mediaRecorder.start(5000);
                 }
             );
@@ -25,6 +34,7 @@ function RecordButton() {
             5. Update transcript state as transcript gets updated.
             */
         }
+            <Button>{recording ? "Stop Recording" : "Start Recording"}</Button>
         </>
     );
 }
