@@ -24,3 +24,4 @@ client/*.sln
 client/*.sw?
 
 server/.venv/*
+server/venv/*
