@@ -32,9 +32,8 @@ async def websocket_endpoint(websocket: WebSocket):
                     audio_chunk.write(audio_bytes)
                     audio_chunk.flush()
                     audio = whisper.pad_or_trim(
-                        whisper.load_audio(audio_chunk.name, sr=16000).reshape(
-                            1, -1
-                        )
+                        whisper.load_audio(
+                            audio_chunk.name, sr=16000).reshape(1, -1)
                     )
                     transcription = whisper.transcribe(model, audio)
                     websocket.send(transcription)
