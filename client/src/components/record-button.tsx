@@ -25,12 +25,7 @@ function RecordButton({ setSessionId }: { setSessionId: Function}) {
                     }
                     setSessionId(e.data.split(": ")[1]);
                 } else {
-                    if (!e.data.startsWith("Error: 'bytes'")) {
-                      setTranscript((prev) => prev + " " + e.data);
-                    }
-                    else {
-                        console.log(e.data);
-                    }
+                    setTranscript((prev) => prev + " " + e.data);
                 }
             };
 
