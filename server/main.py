@@ -29,16 +29,17 @@ async def websocket_endpoint(websocket: WebSocket):
 
     try:
         while True:
-            audio_chunk = await websocket.receive_bytes()
-            audio_np = np.frombuffer(audio_chunk, dtype=np.int16)
-            audio_np = audio_np.astype(np.float32) / np.iinfo(np.int16).max
-            transcription = model.transcribe(audio_np, fp16=False)
-            text = str(transcription["text"])
-            transcript_store[session_id] += text + " "
-            await websocket.send_text(text)
-
-    except Exception as e:
-        await websocket.send_text(f"Error: {str(e)}")
+            message = await websocket.receive()
+            if "bytes" in message:
+                audio_chunk = message["bytes"]
+                audio_np = np.frombuffer(audio_chunk, dtype=np.int16)
+                audio_np = audio_np.astype(np.float32) / np.iinfo(np.int16).max
+                transcription = model.transcribe(audio_np, fp16=False)
+                text = str(transcription["text"])
+                transcript_store[session_id] += text + " "
+                await websocket.send_text(text)
+            elif "text" in message and message["text"] == "STOP":
+                break
 
     finally:
         await websocket.send_text(f"Session ID: {session_id}")

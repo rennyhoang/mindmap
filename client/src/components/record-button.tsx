@@ -28,6 +28,9 @@ function RecordButton({ setSessionId }: { setSessionId: Function}) {
                     if (!e.data.startsWith("Error: 'bytes'")) {
                       setTranscript((prev) => prev + " " + e.data);
                     }
+                    else {
+                        console.log(e.data);
+                    }
                 }
             };
 
