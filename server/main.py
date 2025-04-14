@@ -3,7 +3,7 @@ import uuid
 import whisper
 import numpy as np
 import networkx as nx
-from fastapi import FastAPI, WebSocket, HTTPException
+from fastapi import FastAPI, WebSocket, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -23,7 +23,7 @@ transcript_store = {}
 @app.websocket("/transcribe")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    
+
     session_id = str(uuid.uuid4())
     transcript_store[session_id] = ""
 
@@ -35,15 +35,28 @@ async def websocket_endpoint(websocket: WebSocket):
                 audio_np = np.frombuffer(audio_chunk, dtype=np.int16)
                 audio_np = audio_np.astype(np.float32) / np.iinfo(np.int16).max
                 transcription = model.transcribe(audio_np, fp16=False)
-                text = str(transcription["text"])
-                transcript_store[session_id] += text + " "
-                await websocket.send_text(text)
+                new_text = str(transcription["text"])
+                transcript_store[session_id] += new_text + " "
+                await websocket.send_text(transcript_store[session_id])
             elif "text" in message and message["text"] == "STOP":
                 break
+            else:
+                session_id = message["text"]
 
     finally:
         await websocket.send_text(f"Session ID: {session_id}")
         await websocket.close()
+
+
+@app.post("/uploadfile/{session_id}")
+async def create_upload_file(file: UploadFile, session_id: str):
+    if not session_id:
+        session_id = str(uuid.uuid4())
+
+    transcription = model.transcribe(file.filename)
+    transcript_store[session_id] = transcription
+
+    return {"session_id": session_id, "transcription": transcription}
 
 
 @app.get("/graph/{session_id}")

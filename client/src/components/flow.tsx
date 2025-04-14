@@ -1,20 +1,38 @@
+import { useState, useEffect } from "react";
 import { ReactFlow, MiniMap, Controls, Background } from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
 
-const initialNodes = [
-  { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
-  { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
-];
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+function Flow({ sessionId }: { sessionId: string }) {
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
 
-function Flow() {
+  useEffect(() => {
+    const fetchGraphData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8000/graph/${sessionId}`,
+        );
+        const graphData = await response.json();
+
+        setNodes(graphData.nodes);
+        setEdges(graphData.edges);
+      } catch (error) {
+        console.error("Error fetching graph data:", error);
+      }
+    };
+
+    fetchGraphData();
+  }, [sessionId]);
+
   return (
-    <ReactFlow nodes={initialNodes} edges={initialEdges} fitView>
-      <MiniMap zoomable pannable />
-      <Controls />
-      <Background />
-    </ReactFlow>
+    <div className="w-screen h-screen absolute z-0">
+      <ReactFlow nodes={nodes} edges={edges} fitView>
+        <MiniMap zoomable pannable />
+        <Controls />
+        <Background />
+      </ReactFlow>
+    </div>
   );
 }
 

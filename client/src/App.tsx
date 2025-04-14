@@ -7,8 +7,11 @@ function App() {
   const [sessionId, setSessionId] = useState("");
 
   return (
-    <div className="w-screen h-screen padding-0 margin-0">
-      <RecordButton setSessionId={setSessionId}/>
+    <div className="relative w-screen h-screen padding-0 margin-0">
+      <Flow sessionId={sessionId}/>
+      <div className="relative z-10">
+        <RecordButton sessionId={sessionId} setSessionId={setSessionId} />
+      </div>
     </div>
   );
 }

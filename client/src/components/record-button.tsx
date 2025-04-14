@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import RecordRTC from 'recordrtc';
 
-function RecordButton({ setSessionId }: { setSessionId: Function}) {
+function RecordButton({ sessionId, setSessionId }: { sessionId: string, setSessionId: Function}) {
     const [transcript, setTranscript] = useState("");
     const [recording, setRecording] = useState(false);
     const socketRef = useRef<WebSocket>(null);
@@ -16,6 +16,9 @@ function RecordButton({ setSessionId }: { setSessionId: Function}) {
 
             socketRef.current.onopen = () => {
                 console.log("WebSocket connection established");
+                if (sessionId && socketRef.current) {
+                    socketRef.current.send(sessionId);
+                }
             };
 
             socketRef.current.onmessage = (e) => {
@@ -25,7 +28,7 @@ function RecordButton({ setSessionId }: { setSessionId: Function}) {
                     }
                     setSessionId(e.data.split(": ")[1]);
                 } else {
-                    setTranscript((prev) => prev + " " + e.data);
+                    setTranscript(e.data);
                 }
             };
 
