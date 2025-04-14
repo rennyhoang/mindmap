@@ -1,40 +1,72 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button'
+import { useState, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import RecordRTC from 'recordrtc';
 
-function RecordButton() {
+function RecordButton({ setSessionId }: { setSessionId: Function}) {
     const [transcript, setTranscript] = useState("");
     const [recording, setRecording] = useState(false);
-    const socket = new WebSocket("http://localhost:8080");
+    const socketRef = useRef<WebSocket>(null);
+    const recorderRef = useRef<RecordRTC>(null);
 
-    function startRecording() {
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({audio: true}).then(
-                (stream) => {
-                    const mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.ondataavailable = (e) => {
-                        if (socket.OPEN) {
-                            const audio_chunk = new Blob([e.data], { type: "audio/ogg; codecs=opus"})
-                            socket.send(audio_chunk)
-                        }
-                    };
-                    mediaRecorder.start(5000);
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            socketRef.current = new WebSocket("ws://localhost:8000/transcribe");
+
+            socketRef.current.onopen = () => {
+                console.log("WebSocket connection established");
+            };
+
+            socketRef.current.onmessage = (e) => {
+                if (e.data.startsWith("Session ID")) {
+                    if (socketRef.current) {
+                        socketRef.current.close();
+                    }
+                    setSessionId(e.data.split(": ")[1]);
+                } else {
+                    if (!e.data.startsWith("Error: 'bytes'")) {
+                      setTranscript((prev) => prev + " " + e.data);
+                    }
                 }
-            );
+            };
+
+            recorderRef.current = new RecordRTC(stream, {
+                type: "audio",
+                mimeType: "audio/wav", // Send uncompressed audio
+                recorderType: RecordRTC.StereoAudioRecorder,
+                timeSlice: 5000, // Send chunks every second
+                desiredSampRate: 16000, // Recommended for speech recognition
+                numberOfAudioChannels: 1, // Mono channel for better compatibility
+                ondataavailable: (blob) => {
+                    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+                        socketRef.current.send(blob);
+                    }
+                },
+            });
+        
+            setRecording(true);
+            recorderRef.current.startRecording();
+        } catch (err) {
+            console.error("Error accessing microphone:", err);
         }
-    }
+    };
+
+    const stopRecording = () => {
+        if (recorderRef.current) {
+            recorderRef.current.stopRecording();
+        }
+        if (socketRef.current) {
+            socketRef.current.send("STOP");
+        }
+    };
 
     return (
         <>
-        {
-            /*
-            1. Ask user to start recording audio from some source
-            2. Establish web socket with the server
-            3. Send json to web server with message <type />
-            4. Terminate the web socket when user stops recording
-            5. Update transcript state as transcript gets updated.
-            */
-        }
-            <Button>{recording ? "Stop Recording" : "Start Recording"}</Button>
+            <Button onClick={recording ? stopRecording : startRecording}>
+                {recording ? "Stop Recording" : "Start Recording"}
+            </Button>
+            <Textarea placeholder={transcript} disabled/>
         </>
     );
 }
