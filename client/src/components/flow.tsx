@@ -1,9 +1,21 @@
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ReactFlow, MiniMap, Controls, Background } from "@xyflow/react";
+import { SessionContext } from "./session-context"
 
 import "@xyflow/react/dist/style.css";
 
-function Flow({ sessionId }: { sessionId: string }) {
+function Flow() {
+  const context = useContext(SessionContext);
+
+  if (!context) {
+      throw new Error(
+        "ChildComponent must be used within a SessionProvider"
+      );
+  }
+
+  const { sessionId, } = context;
+
+
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
 

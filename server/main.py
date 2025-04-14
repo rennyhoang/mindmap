@@ -1,5 +1,5 @@
-import spacy
 import uuid
+import spacy
 import whisper
 import numpy as np
 import networkx as nx

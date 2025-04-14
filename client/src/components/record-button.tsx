@@ -1,9 +1,20 @@
-import { useState, useRef } from 'react';
+import { useContext, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import RecordRTC from 'recordrtc';
+import { SessionContext } from "./session-context";
 
-function RecordButton({ sessionId, setSessionId }: { sessionId: string, setSessionId: Function}) {
+function RecordButton() {
+    const context = useContext(SessionContext);
+
+    if (!context) {
+        throw new Error(
+          "ChildComponent must be used within a SessionProvider"
+        );
+    }
+
+    const { sessionId, setSessionId } = context;
+
     const [transcript, setTranscript] = useState("");
     const [recording, setRecording] = useState(false);
     const socketRef = useRef<WebSocket>(null);
