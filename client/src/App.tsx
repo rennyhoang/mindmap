@@ -1,10 +1,14 @@
 import Flow from "@/components/flow";
 import "./App.css";
+import RecordButton from "./components/record-button";
+import { useState } from "react";
 
 function App() {
+  const [sessionId, setSessionId] = useState("");
+
   return (
     <div className="w-screen h-screen padding-0 margin-0">
-      <Flow />
+      <RecordButton setSessionId={setSessionId}/>
     </div>
   );
 }

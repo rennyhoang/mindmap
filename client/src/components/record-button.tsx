@@ -33,11 +33,11 @@ function RecordButton({ setSessionId }: { setSessionId: Function}) {
 
             recorderRef.current = new RecordRTC(stream, {
                 type: "audio",
-                mimeType: "audio/wav", // Send uncompressed audio
+                mimeType: "audio/wav",
                 recorderType: RecordRTC.StereoAudioRecorder,
-                timeSlice: 5000, // Send chunks every second
-                desiredSampRate: 16000, // Recommended for speech recognition
-                numberOfAudioChannels: 1, // Mono channel for better compatibility
+                timeSlice: 5000,
+                desiredSampRate: 16000,
+                numberOfAudioChannels: 1,
                 ondataavailable: (blob) => {
                     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
                         socketRef.current.send(blob);
@@ -59,6 +59,7 @@ function RecordButton({ setSessionId }: { setSessionId: Function}) {
         if (socketRef.current) {
             socketRef.current.send("STOP");
         }
+        setRecording(false);
     };
 
     return (
