@@ -1,9 +1,12 @@
 import uuid
+import tempfile
+from itertools import combinations
+
 import spacy
 import whisper
 import numpy as np
 import networkx as nx
-from fastapi import FastAPI, WebSocket, HTTPException, UploadFile
+from fastapi import FastAPI, File, WebSocket, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -16,8 +19,19 @@ app.add_middleware(
 )
 
 nlp = spacy.load("en_core_web_trf")
+lemmatizer = nlp.get_pipe("lemmatizer")
 model = whisper.load_model("small.en")
 transcript_store = {}
+
+EXCLUDED_ENTITY_LABELS = {
+    "DATE",  # e.g., "January 3rd", "10/10/2020"
+    "TIME",  # e.g., "3:00 PM"
+    "PERCENT",  # e.g., "50%"
+    "MONEY",  # e.g., "$100", "1 billion dollars"
+    "QUANTITY",  # e.g., "100 kg", "3 liters"
+    "ORDINAL",  # e.g., "first", "third"
+    "CARDINAL",  # e.g., "one", "200"
+}
 
 
 @app.websocket("/transcribe")
@@ -48,15 +62,24 @@ async def websocket_endpoint(websocket: WebSocket):
         await websocket.close()
 
 
-@app.post("/uploadfile/{session_id}")
-async def create_upload_file(file: UploadFile, session_id: str):
-    if not session_id:
-        session_id = str(uuid.uuid4())
+@app.post("/uploadfile/")
+async def create_upload_file(file: UploadFile = File(...)):
+    print("WE IN HERE")
+    session_id = str(uuid.uuid4())
+    contents = await file.read()
 
-    transcription = model.transcribe(file.filename)
-    transcript_store[session_id] = transcription
+    print("WE ACTUALLY IN HERE")
+    with tempfile.NamedTemporaryFile(delete=True, mode="w+b") as tmp_file:
+        tmp_file.write(contents)
+        print("WE WROTE TO THE FILE")
+        transcription = model.transcribe(tmp_file.name)
+        print("WE ARE DONE TRANSCRIBING")
+        transcript_store[session_id] = transcription["text"]
 
-    return {"session_id": session_id, "transcription": transcription}
+    return JSONResponse(
+        status_code=200,
+        content={"session_id": session_id, "transcription": transcription["text"]},
+    )
 
 
 @app.get("/graph/{session_id}")
@@ -66,18 +89,22 @@ async def generate_graph(session_id: str):
 
     transcript = transcript_store[session_id]
     doc = nlp(transcript)
-    G = nx.Graph()
+    graph = nx.Graph()
 
     for entity in doc.ents:
-        G.add_node(entity.text, label=entity.label_)
+        if entity.label_ not in EXCLUDED_ENTITY_LABELS:
+            graph.add_node(entity.lemma_.lower(), label=entity.label_)
 
     for sentence in doc.sents:
-        entities_in_sentence = [ent.text for ent in sentence.ents]
-        for i in range(len(entities_in_sentence)):
-            for j in range(i + 1, len(entities_in_sentence)):
-                G.add_edge(entities_in_sentence[i], entities_in_sentence[j])
+        entities_in_sentence = [
+            ent.lemma_
+            for ent in sentence.ents
+            if ent.label_ not in EXCLUDED_ENTITY_LABELS
+        ]
+        for entity1, entity2 in combinations(entities_in_sentence, 2):
+            graph.add_edge(entity1, entity2)
 
-    pos = nx.spring_layout(G, k=200)
+    pos = nx.spring_layout(graph, k=200)
 
     nodes = [
         {
@@ -94,7 +121,7 @@ async def generate_graph(session_id: str):
             "source": str(source),
             "target": str(target),
         }
-        for source, target in G.edges()
+        for source, target in graph.edges()
     ]
 
-    return JSONResponse(content={"nodes": nodes, "edges": edges})
+    return JSONResponse(status_code=200, content={"nodes": nodes, "edges": edges})

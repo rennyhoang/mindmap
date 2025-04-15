@@ -2,20 +2,19 @@ import { useContext, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import RecordRTC from 'recordrtc';
-import { SessionContext } from "./session-context";
+import { SessionContext, TranscriptContext } from "./session-context";
 
 function RecordButton() {
-    const context = useContext(SessionContext);
-
-    if (!context) {
+    const sessionContext = useContext(SessionContext);
+    const transcriptContext = useContext(TranscriptContext);
+    if (!sessionContext || !transcriptContext) {
         throw new Error(
           "ChildComponent must be used within a SessionProvider"
         );
     }
+    const { sessionId, setSessionId } = sessionContext;
+    const { transcript, setTranscript } = transcriptContext;
 
-    const { sessionId, setSessionId } = context;
-
-    const [transcript, setTranscript] = useState("");
     const [recording, setRecording] = useState(false);
     const socketRef = useRef<WebSocket>(null);
     const recorderRef = useRef<RecordRTC>(null);
@@ -23,7 +22,7 @@ function RecordButton() {
     const startRecording = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            socketRef.current = new WebSocket("ws://localhost:8000/transcribe");
+            socketRef.current = new WebSocket("ws://127.0.0.1:8000/transcribe");
 
             socketRef.current.onopen = () => {
                 console.log("WebSocket connection established");
@@ -37,9 +36,9 @@ function RecordButton() {
                     if (socketRef.current) {
                         socketRef.current.close();
                     }
-                    setSessionId(e.data.split(": ")[1]);
+                    if (setSessionId) {setSessionId(e.data.split(": ")[1])};
                 } else {
-                    setTranscript(e.data);
+                    if (setTranscript) {setTranscript(e.data)};
                 }
             };
 
