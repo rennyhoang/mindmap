@@ -9,6 +9,7 @@ import networkx as nx
 from fastapi import FastAPI, File, WebSocket, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 app = FastAPI()
 app.add_middleware(
@@ -32,6 +33,11 @@ EXCLUDED_ENTITY_LABELS = {
     "ORDINAL",  # e.g., "first", "third"
     "CARDINAL",  # e.g., "one", "200"
 }
+
+
+class GraphRequest(BaseModel):
+    sessionId: str
+    transcript: str
 
 
 @app.websocket("/transcribe")
@@ -64,16 +70,12 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile = File(...)):
-    print("WE IN HERE")
     session_id = str(uuid.uuid4())
     contents = await file.read()
 
-    print("WE ACTUALLY IN HERE")
     with tempfile.NamedTemporaryFile(delete=True, mode="w+b") as tmp_file:
         tmp_file.write(contents)
-        print("WE WROTE TO THE FILE")
         transcription = model.transcribe(tmp_file.name)
-        print("WE ARE DONE TRANSCRIBING")
         transcript_store[session_id] = transcription["text"]
 
     return JSONResponse(
@@ -82,12 +84,15 @@ async def create_upload_file(file: UploadFile = File(...)):
     )
 
 
-@app.get("/graph/{session_id}")
-async def generate_graph(session_id: str):
-    if session_id not in transcript_store:
-        raise HTTPException(status_code=404, detail="Session not found")
+@app.post("/graph/")
+async def generate_graph(graph_request: GraphRequest):
+    session_id = graph_request.sessionId;
+    transcript = graph_request.transcript;
 
-    transcript = transcript_store[session_id]
+    if not session_id or session_id not in transcript_store:
+        session_id = str(uuid.uuid4());
+        transcript_store[session_id] = transcript
+
     doc = nlp(transcript)
     graph = nx.Graph()
 
@@ -97,7 +102,7 @@ async def generate_graph(session_id: str):
 
     for sentence in doc.sents:
         entities_in_sentence = [
-            ent.lemma_
+            ent.lemma_.lower()
             for ent in sentence.ents
             if ent.label_ not in EXCLUDED_ENTITY_LABELS
         ]
@@ -124,4 +129,4 @@ async def generate_graph(session_id: str):
         for source, target in graph.edges()
     ]
 
-    return JSONResponse(status_code=200, content={"nodes": nodes, "edges": edges})
+    return JSONResponse(status_code=200, content={"session_id": session_id, "nodes": nodes, "edges": edges})

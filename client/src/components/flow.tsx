@@ -12,7 +12,7 @@ function Flow() {
         "ChildComponent must be used within a SessionProvider"
       );
   }
-  const { sessionId, } = sessionContext;
+  const { sessionId, setSessionId } = sessionContext;
   const { transcript, } = transcriptContext;
 
   const [nodes, setNodes] = useState([]);
@@ -31,10 +31,18 @@ function Flow() {
     const fetchGraphData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8000/graph/${sessionId}`,
+          `http://localhost:8000/graph/`,
+          {
+              method: "POST",
+              headers: {
+                "Content-type": "application/json"
+              },
+              body: JSON.stringify({transcript: transcript, sessionId: sessionId}),
+          }
         );
         const graphData = await response.json();
 
+        if (setSessionId) {setSessionId(graphData.session_id)};
         setNodes(graphData.nodes);
         setEdges(graphData.edges);
       } catch (error) {

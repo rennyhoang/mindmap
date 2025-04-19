@@ -1,4 +1,4 @@
-import { useContext, useState, useRef } from 'react';
+import { useContext, useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import RecordRTC from 'recordrtc';
@@ -18,6 +18,21 @@ function RecordButton() {
     const [recording, setRecording] = useState(false);
     const socketRef = useRef<WebSocket>(null);
     const recorderRef = useRef<RecordRTC>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+    // Only scroll if recording is active AND the ref is attached
+    if (recording && textareaRef.current) {
+      const textarea = textareaRef.current;
+      textarea.scrollTop = textarea.scrollHeight;
+    }
+  }, [transcript, recording]); // Dependencies: run effect when these change
+    
+    const onTextareaChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        if (setTranscript && e.currentTarget.value) {
+            setTranscript(e.currentTarget.value);
+        }
+    };
 
     const startRecording = async () => {
         try {
@@ -38,7 +53,7 @@ function RecordButton() {
                     }
                     if (setSessionId) {setSessionId(e.data.split(": ")[1])};
                 } else {
-                    if (setTranscript) {setTranscript(e.data)};
+                    if (textareaRef.current) {textareaRef.current.value = transcript};
                 }
             };
 
@@ -74,12 +89,12 @@ function RecordButton() {
     };
 
     return (
-        <>
+        <div className="flex flex-col gap-4">
             <Button onClick={recording ? stopRecording : startRecording}>
                 {recording ? "Stop Recording" : "Start Recording"}
             </Button>
-            <Textarea placeholder={transcript} disabled/>
-        </>
+            <Textarea ref={textareaRef} className="bg-background resize-none" onChange={onTextareaChange}/>
+        </div>
     );
 }
 

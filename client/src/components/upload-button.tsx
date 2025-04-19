@@ -12,7 +12,7 @@ function UploadButton() {
         );
     }
     const { sessionId, setSessionId } = sessionContext;
-    const { transcript, setTranscript } = transcriptContext;
+    const setTranscript = transcriptContext.setTranscript;
     const [file, setFile] = useState<File | null>(null);
 
     const uploadFile = async () => {
@@ -37,14 +37,14 @@ function UploadButton() {
     };
 
     return(
-        <>
-            <Input name="audioFile" type="file" onChange={(e) => {
+        <div className="flex flex-row gap-4">
+            <Input className="bg-background" name="audioFile" type="file" onChange={(e) => {
                 if (e.target.files && e.target.files[0]) {
                     setFile(e.target.files[0]);
                   }
             }}/>
             <Button onClick={uploadFile}>Submit</Button>
-        </>
+        </div>
     );
 };
 
