@@ -25,3 +25,4 @@ client/*.sw?
 
 server/.venv/*
 server/venv/*
+server/__pycache__/*
