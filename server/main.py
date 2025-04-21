@@ -109,12 +109,12 @@ async def generate_graph(graph_request: GraphRequest):
         for entity1, entity2 in combinations(entities_in_sentence, 2):
             graph.add_edge(entity1, entity2)
 
-    pos = nx.spring_layout(graph, k=200)
+    pos = nx.spring_layout(graph)
 
     nodes = [
         {
             "id": node,
-            "position": {"x": float(x) * 200, "y": float(y) * 200},
+            "position": {"x": float(x) * 5000, "y": float(y) * 5000},
             "data": {"label": node},
         }
         for node, (x, y) in pos.items()
