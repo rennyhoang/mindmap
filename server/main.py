@@ -1,3 +1,5 @@
+import getpass
+import os
 import uuid
 import tempfile
 from itertools import combinations
@@ -6,6 +8,8 @@ import spacy
 import whisper
 import numpy as np
 import networkx as nx
+from langchain.chat_models import init_chat_model
+from langchain_core.messages import HumanMessage, SystemMessage
 from fastapi import FastAPI, File, WebSocket, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -23,6 +27,11 @@ nlp = spacy.load("en_core_web_trf")
 lemmatizer = nlp.get_pipe("lemmatizer")
 model = whisper.load_model("small.en")
 transcript_store = {}
+
+if not os.environ.get("OPENAI_API_KEY"):
+  os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter API key for OpenAI: ")
+
+llm = init_chat_model("gpt-4o-mini", model_provider="openai")
 
 EXCLUDED_ENTITY_LABELS = {
     "DATE",  # e.g., "January 3rd", "10/10/2020"
@@ -92,6 +101,13 @@ async def generate_graph(graph_request: GraphRequest):
     if not session_id or session_id not in transcript_store:
         session_id = str(uuid.uuid4());
         transcript_store[session_id] = transcript
+    
+    messages = [
+        SystemMessage("Return a short title based on the following text"),
+        HumanMessage(transcript),
+    ]
+    topic = llm.invoke(messages).content
+    print(topic)
 
     doc = nlp(transcript)
     graph = nx.Graph()
@@ -129,4 +145,4 @@ async def generate_graph(graph_request: GraphRequest):
         for source, target in graph.edges()
     ]
 
-    return JSONResponse(status_code=200, content={"session_id": session_id, "nodes": nodes, "edges": edges})
+    return JSONResponse(status_code=200, content={"session_id": session_id, "nodes": nodes, "edges": edges, "title": topic})

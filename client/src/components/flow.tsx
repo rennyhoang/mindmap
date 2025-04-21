@@ -8,6 +8,7 @@ import {
   applyEdgeChanges,
   NodeChange,
   EdgeChange,
+  Panel,
 } from "@xyflow/react";
 import { SessionContext, TranscriptContext } from "./session-context";
 
@@ -22,6 +23,7 @@ function Flow() {
   const { sessionId, setSessionId } = sessionContext;
   const { transcript } = transcriptContext;
 
+  const [title, setTitle] = useState("Untitled");
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
 
@@ -56,13 +58,14 @@ function Flow() {
         }
         setNodes(graphData.nodes);
         setEdges(graphData.edges);
+        setTitle(graphData.title);
       } catch (error) {
         console.error("Error fetching graph data:", error);
       }
     };
 
     fetchGraphData();
-  }, [transcript]);
+  }, [sessionId]);
 
   return (
     <div className="w-screen h-screen absolute z-0">
@@ -73,6 +76,7 @@ function Flow() {
         onEdgesChange={onEdgesChange}
         fitView
       >
+        <h1 className="m-4 text-2xl">{title}</h1>
         <MiniMap zoomable pannable />
         <Controls />
         <Background />
