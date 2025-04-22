@@ -10,7 +10,7 @@ import numpy as np
 import networkx as nx
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
-from fastapi import FastAPI, File, WebSocket, HTTPException, UploadFile
+from fastapi import FastAPI, File, WebSocket, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -141,6 +141,14 @@ async def generate_graph(graph_request: GraphRequest):
             "id": f"e-{source}-{target}",
             "source": str(source),
             "target": str(target),
+            "label": llm.invoke(
+                [
+                    SystemMessage(
+                        "Return a brief phrase about how the following two topics are related. Limit it to three words max."
+                    ),
+                    HumanMessage(str(source) + " " + str(target)),
+                ]
+            ).content,
         }
         for source, target in graph.edges()
     ]

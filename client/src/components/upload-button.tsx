@@ -1,6 +1,7 @@
-import { useContext, useState } from "react";
+import { useRef, useContext, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react"
 import { SessionContext, TranscriptContext } from "./session-context";
 
 function UploadButton() {
@@ -12,11 +13,15 @@ function UploadButton() {
   const setSessionId = sessionContext.setSessionId;
   const setTranscript = transcriptContext.setTranscript;
   const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const uploadFile = async () => {
     if (!file) {
       return;
     }
+
+    setLoading(true);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -36,12 +41,14 @@ function UploadButton() {
     } catch {
       console.log("catch");
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="flex flex-row gap-4">
       <Input
-        className="bg-background"
+        className="bg-background drop-shadow-xl/25"
         name="audioFile"
         type="file"
         onChange={(e) => {
@@ -49,8 +56,12 @@ function UploadButton() {
             setFile(e.target.files[0]);
           }
         }}
+        disabled={loading ? true : false}
       />
-      <Button onClick={uploadFile} className="drop-shadow-xl/25">Upload</Button>
+      <Button ref={buttonRef} onClick={uploadFile} className="drop-shadow-xl/25" disabled={loading ? true : false}>
+        {loading ? <Loader2 className="animate-spin"></Loader2> : <></>}
+        {!loading ? "Upload" : "Loading"}
+      </Button>
     </div>
   );
 }

@@ -8,7 +8,7 @@ function Transcript() {
 
   return (
       <Textarea
-        className="bg-background resize-none text-xs"
+        className="bg-background resize-none text-xs drop-shadow-xl/25"
         value={transcript}
         readOnly
       />
