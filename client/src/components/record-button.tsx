@@ -1,4 +1,4 @@
-import { useContext, useState, useRef, useEffect } from "react";
+import { useContext, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import RecordRTC from "recordrtc";
 import { SessionContext, TranscriptContext } from "./session-context";
