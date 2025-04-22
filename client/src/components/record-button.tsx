@@ -1,6 +1,5 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import RecordRTC from "recordrtc";
 import { SessionContext, TranscriptContext } from "./session-context";
 
@@ -11,33 +10,11 @@ function RecordButton() {
     throw new Error("ChildComponent must be used within a SessionProvider");
   }
   const { sessionId, setSessionId } = sessionContext;
-  const { transcript, setTranscript } = transcriptContext;
+  const setTranscript = transcriptContext.setTranscript;
 
   const [recording, setRecording] = useState(false);
   const socketRef = useRef<WebSocket>(null);
   const recorderRef = useRef<RecordRTC>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (recording && textareaRef.current) {
-      const textarea = textareaRef.current;
-      textarea.scrollTop = textarea.scrollHeight;
-    }
-  }, [transcript, recording]);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.value = transcript;
-    }
-  }, [transcript]);
-
-  const onTextareaChange = async (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    if (setTranscript && e.currentTarget.value) {
-      setTranscript(e.currentTarget.value);
-    }
-  };
 
   const startRecording = async () => {
     try {
@@ -60,8 +37,8 @@ function RecordButton() {
             setSessionId(e.data.split(": ")[1]);
           }
         } else {
-          if (textareaRef.current) {
-            textareaRef.current.value = transcript;
+          if (setTranscript) {
+             setTranscript(e.data);
           }
         }
       };
@@ -101,16 +78,9 @@ function RecordButton() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <Button onClick={recording ? stopRecording : startRecording}>
+      <Button onClick={recording ? stopRecording : startRecording} className="drop-shadow-xl/25">
         {recording ? "Stop Recording" : "Start Recording"}
       </Button>
-      <Textarea
-        ref={textareaRef}
-        className="bg-background resize-none"
-        onChange={onTextareaChange}
-      />
-    </div>
   );
 }
 

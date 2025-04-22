@@ -8,7 +8,6 @@ import {
   applyEdgeChanges,
   NodeChange,
   EdgeChange,
-  Panel,
 } from "@xyflow/react";
 import { SessionContext, TranscriptContext } from "./session-context";
 
@@ -40,6 +39,7 @@ function Flow() {
 
   useEffect(() => {
     const fetchGraphData = async () => {
+      if (!transcript) { return; }
       try {
         const response = await fetch(`http://localhost:8000/graph/`, {
           method: "POST",
@@ -65,10 +65,11 @@ function Flow() {
     };
 
     fetchGraphData();
-  }, [sessionId]);
+  }, [transcript]);
 
   return (
     <div className="w-screen h-screen absolute z-0">
+      <h1 className="bg-white border-grey border-1 m-4 p-2 rounded-sm font-bold text-lg z-10 absolute top left">{title.slice(1, title.length - 1)}</h1>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -76,7 +77,6 @@ function Flow() {
         onEdgesChange={onEdgesChange}
         fitView
       >
-        <h1 className="m-4 text-2xl">{title}</h1>
         <MiniMap zoomable pannable />
         <Controls />
         <Background />

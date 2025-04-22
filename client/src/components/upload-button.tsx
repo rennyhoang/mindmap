@@ -50,7 +50,7 @@ function UploadButton() {
           }
         }}
       />
-      <Button onClick={uploadFile}>Submit</Button>
+      <Button onClick={uploadFile} className="drop-shadow-xl/25">Upload</Button>
     </div>
   );
 }

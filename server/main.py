@@ -29,7 +29,7 @@ model = whisper.load_model("small.en")
 transcript_store = {}
 
 if not os.environ.get("OPENAI_API_KEY"):
-  os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter API key for OpenAI: ")
+    os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter API key for OpenAI: ")
 
 llm = init_chat_model("gpt-4o-mini", model_provider="openai")
 
@@ -95,13 +95,13 @@ async def create_upload_file(file: UploadFile = File(...)):
 
 @app.post("/graph/")
 async def generate_graph(graph_request: GraphRequest):
-    session_id = graph_request.sessionId;
-    transcript = graph_request.transcript;
+    session_id = graph_request.sessionId
+    transcript = graph_request.transcript
 
     if not session_id or session_id not in transcript_store:
-        session_id = str(uuid.uuid4());
+        session_id = str(uuid.uuid4())
         transcript_store[session_id] = transcript
-    
+
     messages = [
         SystemMessage("Return a short title based on the following text"),
         HumanMessage(transcript),
@@ -130,7 +130,7 @@ async def generate_graph(graph_request: GraphRequest):
     nodes = [
         {
             "id": node,
-            "position": {"x": float(x) * 5000, "y": float(y) * 5000},
+            "position": {"x": float(x) * 2500, "y": float(y) * 2500},
             "data": {"label": node},
         }
         for node, (x, y) in pos.items()
@@ -145,4 +145,12 @@ async def generate_graph(graph_request: GraphRequest):
         for source, target in graph.edges()
     ]
 
-    return JSONResponse(status_code=200, content={"session_id": session_id, "nodes": nodes, "edges": edges, "title": topic})
+    return JSONResponse(
+        status_code=200,
+        content={
+            "session_id": session_id,
+            "nodes": nodes,
+            "edges": edges,
+            "title": topic,
+        },
+    )
