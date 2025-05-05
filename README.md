@@ -50,7 +50,7 @@ LearnIt is a tool that transforms spoken or uploaded audio into structured mind 
    - SpaCy/Transformers pipeline → nodes & edges  
 
 4. **Title Generation**  
-   - Fine-tuned BART (Hugging Face) → session title  
+   - Fine-tuned BART using newsroom data set
 
 5. **Vector Store & RAG**  
    - Store embeddings in Pinecone
