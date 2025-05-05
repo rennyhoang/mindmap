@@ -44,7 +44,7 @@ LearnIt is a tool that transforms spoken or uploaded audio into structured mind 
    - Audio File input
 
 2. **Speech Recognition**  
-   - OpenAI's Whisper + Voice Acitivity Detection
+   - Fine-tuned OpenAI's Whisper + Voice Acitivity Detection
 
 3. **Relation Extraction**  
    - SpaCy/Transformers pipeline → nodes & edges  
