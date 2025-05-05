@@ -21,10 +21,10 @@ LearnIt is a tool that transforms spoken or uploaded audio into structured mind 
 ## Features
 
 - **Real-time ASR & TTS**  
-  Record audio from microphone, transcribe on the fly, and optionally stream synthesized speech of the transcript.
+  Record audio from microphone and transcribe on the fly.
 
-- **Offline Upload**  
-  Process pre-recorded audio files (WAV/MP3/FLAC) for batch mind-map generation.
+- **Prerecorded Audio**  
+  Process pre-recorded audio files (WAV/MP3/FLAC) for mind-map generation.
 
 - **Relation Extraction**  
   Identify entities and their relations to define nodes and edges of the mind map.
@@ -38,8 +38,8 @@ LearnIt is a tool that transforms spoken or uploaded audio into structured mind 
 ## Architecture
 
 1. **Audio Ingestion**  
-   - Live stream via PyAudio/sounddevice  
-   - File input via `ffmpeg`  
+   - Live stream via RecordRTC and WebSockets
+   - Audio File input
 
 2. **Speech Recognition**  
    - OpenAI's Whisper + Voice Acitivity Detection
