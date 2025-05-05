@@ -1,7 +1,8 @@
 # LearnIt
-![image](https://github.com/user-attachments/assets/2fc99ae6-d7c2-4baa-8499-525ace005013)
-
 LearnIt is a tool that transforms spoken or uploaded audio into structured mind maps. It combines automatic speech recognition (ASR), relation extraction, title generation via a fine-tuned BART model, and a Retrieval-Augmented Generation (RAG) chatbot for interactive Q&A over your transcript.
+- A **FastAPI server** for speech-to-text, relation extraction, title generation, vector storage, and a RAG chatbot.
+- A **React client** using React Flow for interactive mind-map visualization and user interaction.
+![image](https://github.com/user-attachments/assets/2fc99ae6-d7c2-4baa-8499-525ace005013)
 
 ## Table of Contents
 
