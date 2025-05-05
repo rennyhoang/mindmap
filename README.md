@@ -1,7 +1,7 @@
-# MindMap Helper
+# LearnIt
 ![image](https://github.com/user-attachments/assets/2fc99ae6-d7c2-4baa-8499-525ace005013)
 
-MindMap Helper is a tool that transforms spoken or uploaded audio into structured mind maps. It combines automatic speech recognition (ASR), relation extraction, title generation via a fine-tuned BART model, and a Retrieval-Augmented Generation (RAG) chatbot for interactive Q&A over your transcript.
+LearnIt is a tool that transforms spoken or uploaded audio into structured mind maps. It combines automatic speech recognition (ASR), relation extraction, title generation via a fine-tuned BART model, and a Retrieval-Augmented Generation (RAG) chatbot for interactive Q&A over your transcript.
 
 ## Table of Contents
 
@@ -42,7 +42,7 @@ MindMap Helper is a tool that transforms spoken or uploaded audio into structure
    - File input via `ffmpeg`  
 
 2. **Speech Recognition**  
-   - Whisper or SpeechRecognition → raw transcript  
+   - OpenAI's Whisper + Voice Acitivity Detection
 
 3. **Relation Extraction**  
    - SpaCy/Transformers pipeline → nodes & edges  
@@ -51,26 +51,8 @@ MindMap Helper is a tool that transforms spoken or uploaded audio into structure
    - Fine-tuned BART (Hugging Face) → session title  
 
 5. **Vector Store & RAG**  
-   - Encode transcript per chunk (sentence/paragraph)  
-   - Store embeddings in FAISS  
-   - LangChain/OpenAI for Q&A  
+   - Store embeddings in Pinecone
+   - LangChain for Q&A  
 
 6. **Visualization**  
-   - Export mind map (Graphviz/D3.js)  
-
-## Prerequisites
-
-- Python 3.8+
-- `pip` or `poetry`
-- `ffmpeg` (for audio conversions)
-- Microphone (for live mode)
-
-## Installation
-
-```bash
-git clone https://github.com/yourusername/mindmap-helper.git
-cd mindmap-helper
-python -m venv venv
-source venv/bin/activate    # macOS/Linux
-# .\venv\Scripts\activate   # Windows
-pip install -r requirements.txt
+   - Interactive mindmap/graph using React Flow
