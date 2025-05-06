@@ -25,7 +25,7 @@ Traditional linear notetaking can be less effective for capturing complex relati
 ## How It Works (Approach)
 
 1.  **Audio Ingestion & Chunking:** Audio is captured (real-time or file) and segmented using VAD to respect natural speech pauses.
-2.  **Transcription:** Segments are transcribed using OpenAI's Whisper TTS.
+2.  **Transcription:** Segments are transcribed using OpenAI's Whisper STT.
 3.  **Entity Recognition & Filtering:** The transcription is processed by spaCy for NER. Entities are filtered based on type (e.g., removing quantities) and similarity (using cosine similarity to merge near-duplicates). These become the mindmap nodes (vertices).
 4.  **Edge & Relation Generation:** If two entities appear within a defined proximity (X sentences), an edge is created. OpenAI's GPT-4o-mini is then used to label the relationship on the edge.
 5.  **Title Generation:** The transcript is fed into a fine-tuned BART model (trained on the newsroom dataset) to generate a concise title.
@@ -45,13 +45,13 @@ Traditional linear notetaking can be less effective for capturing complex relati
 *   **RAG Vector Store:** Pinecone
 *   **Mindmap Structure:** networkx
 *   **Title Generation:** Fine-tuned BART model
-*   **TTS:** OpenAI Whisper
+*   **STT:** OpenAI Whisper
 *   **Relation Extraction & Chat:** OpenAI GPT-4o-mini (with structured output)
 
 ## Lessons Learned
 
 *   **Generic Relation Extraction:** This is a challenging NLP task due to its open-ended nature. Training models requires specific datasets often focused on fixed relation types, and using powerful LLMs incurs latency and cost.
-*   **Ambiguity in Language:** Processing natural language inherently involves dealing with ambiguity. TTS can misspell entities, simple co-occurrence might miss distant but relevant connections, and capturing implied meaning is difficult. Effective NLP applications strive to minimize this ambiguity.
+*   **Ambiguity in Language:** Processing natural language inherently involves dealing with ambiguity. STT can misspell entities, simple co-occurrence might miss distant but relevant connections, and capturing implied meaning is difficult. Effective NLP applications strive to minimize this ambiguity.
 
 ## Future Improvements
 
