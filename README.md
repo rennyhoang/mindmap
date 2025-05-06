@@ -1,4 +1,5 @@
-# LearnIt: NLP-Powered Non-Linear Notetaking Assistant
+# 💡 LearnIt: NLP-Powered Non-Linear Notetaking Assistant
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" /><img src="https://img.shields.io/badge/fastapi-109989?style=for-the-badge&logo=FASTAPI&logoColor=white" /><img src="https://img.shields.io/badge/ChatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white" /><img src="https://img.shields.io/badge/langchain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white"/><img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white"/><img src="https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white"/><img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
 
 LearnIt is an NLP application designed to help users transition to non-linear notetaking methods, which research suggests better align with the process of encoding knowledge. It acts as an intelligent companion during lectures or for analyzing audio recordings afterwards, automatically generating an interactive mindmap and providing a context-aware chatbot for querying the content.
 
