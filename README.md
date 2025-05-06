@@ -64,9 +64,9 @@ Traditional linear notetaking can be less effective for capturing complex relati
 *   Add support for persistent sessions, user accounts, and saving mindmaps.
 *   Introduce a dual-view mode allowing users to create their own mindmap alongside LearnIt's generated one for comparison.
 
-## Report
+## Report/Video
 
-Find the related report [here](https://github.com/user-attachments/files/20067364/nlp-final-project-report.pdf)
+Find the related report [here](https://github.com/user-attachments/files/20067364/nlp-final-project-report.pdf) and video [here](https://www.youtube.com/watch?v=oTtPaDURLgU)
 
 ## Contributor(s)
 
