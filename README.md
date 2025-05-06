@@ -68,7 +68,6 @@ Traditional linear notetaking can be less effective for capturing complex relati
 
 Find the source code here: [https://github.com/rennyhoang/mindmap](https://github.com/rennyhoang/mindmap)
 
-## Contributor
+## Contributor(s)
 
 *   Renny Hoang
-   - Interactive mindmap/graph using React Flow
