@@ -38,7 +38,7 @@ function RecordButton() {
           }
         } else {
           if (setTranscript) {
-             setTranscript(e.data);
+            setTranscript(e.data);
           }
         }
       };
@@ -78,9 +78,12 @@ function RecordButton() {
   };
 
   return (
-      <Button onClick={recording ? stopRecording : startRecording} className="drop-shadow-xl/25">
-        {recording ? "Stop Recording" : "Start Recording"}
-      </Button>
+    <Button
+      onClick={recording ? stopRecording : startRecording}
+      className="drop-shadow-xl/25"
+    >
+      {recording ? "Stop Recording" : "Start Recording"}
+    </Button>
   );
 }
 

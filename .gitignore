@@ -28,3 +28,7 @@ server/venv/*
 server/__pycache__/*
 
 title-generator/env/*
+title-generator/newsroom-release/*
+title-generator/tokenized_newsroom/*
+title-generator/bart-newsroom-title/*
+title-generator/bart_title_generator/*

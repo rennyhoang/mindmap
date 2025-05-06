@@ -3,6 +3,7 @@ import "./App.css";
 import RecordButton from "./components/record-button";
 import UploadButton from "./components/upload-button";
 import Transcript from "./components/transcript";
+import QaForm from "./components/qaForm";
 import { SessionProvider } from "./components/session-context";
 
 function App() {
@@ -14,6 +15,9 @@ function App() {
           <UploadButton />
           <RecordButton />
           <Transcript />
+        </div>
+        <div className="w-1/4 absolute bottom-4 left-4">
+          <QaForm />
         </div>
       </div>
     </SessionProvider>

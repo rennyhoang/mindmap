@@ -22,7 +22,7 @@ function Flow() {
   const { sessionId, setSessionId } = sessionContext;
   const { transcript } = transcriptContext;
 
-  const [title, setTitle] = useState("\"Untitled\"");
+  const [title, setTitle] = useState('"Untitled"');
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
 
@@ -39,7 +39,9 @@ function Flow() {
 
   useEffect(() => {
     const fetchGraphData = async () => {
-      if (!transcript) { return; }
+      if (!transcript) {
+        return;
+      }
       try {
         const response = await fetch(`http://localhost:8000/graph/`, {
           method: "POST",
@@ -69,7 +71,9 @@ function Flow() {
 
   return (
     <div className="w-screen h-screen absolute z-0">
-      <h1 className="bg-white border-grey border-1 m-4 p-2 rounded-sm font-bold text-lg z-10 absolute top left drop-shadow-xl/25">{title.slice(1, title.length - 1)}</h1>
+      <h1 className="bg-white border-grey border-1 m-4 p-2 rounded-sm font-bold text-lg z-10 absolute top left drop-shadow-xl/25">
+        {title.slice(1, title.length - 1)}
+      </h1>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -78,7 +82,6 @@ function Flow() {
         fitView
       >
         <MiniMap zoomable pannable />
-        <Controls />
         <Background />
       </ReactFlow>
     </div>
