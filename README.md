@@ -64,10 +64,10 @@ Traditional linear notetaking can be less effective for capturing complex relati
 *   Add support for persistent sessions, user accounts, and saving mindmaps.
 *   Introduce a dual-view mode allowing users to create their own mindmap alongside LearnIt's generated one for comparison.
 
-## Repository
+## Report
 
-Find the source code here: [https://github.com/rennyhoang/mindmap](https://github.com/rennyhoang/mindmap)
+Find the related report [here](https://github.com/user-attachments/files/20054730/Copy.of.Sample.IT.and.Software.Report.Template.pdf)
 
 ## Contributor(s)
 
-*   Renny Hoang
+Renny Hoang
