@@ -66,7 +66,7 @@ Traditional linear notetaking can be less effective for capturing complex relati
 
 ## Report
 
-Find the related report [here](https://github.com/user-attachments/files/20054730/Copy.of.Sample.IT.and.Software.Report.Template.pdf)
+Find the related report [here](https://github.com/user-attachments/files/20067364/nlp-final-project-report.pdf)
 
 ## Contributor(s)
 
