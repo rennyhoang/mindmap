@@ -63,7 +63,7 @@ class Question(BaseModel):
     question: str
 
 def upload_text(session_id, text):
-    index_name = session_id
+    index_name = "learnit" 
     if index_name not in pc.list_indexes():
         pc.create_index(name = index_name, dimension=1536, vector_type="dense", metric="cosine", spec=ServerlessSpec(
             cloud="aws",
@@ -71,7 +71,7 @@ def upload_text(session_id, text):
         ),)
     index = pc.Index(index_name)
     for c in chunk_text(text):
-        upsert_text(index, "chunk_" + str(uuid.uuid4()), c)
+        upsert_text(index, "chunk_" + str(uuid.uuid4()), c, session_id)
 
 def chunk_text(text: str,
                         max_words: int = 200,
@@ -98,14 +98,14 @@ def embed_text(text: str) -> list[float]:
     resp = client.embeddings.create(input=[text], model="text-embedding-ada-002")
     return resp.data[0].embedding
 
-def upsert_text(index, id: str, text: str):
+def upsert_text(index, id: str, text: str, namespace):
     """Embed text and upsert into Pinecone with metadata."""
     vector = embed_text(text)
     index.upsert(
         vectors=[
             (id, vector, {"text": text})
         ],
-        namespace=""
+        namespace=namespace
     )
 
 @app.websocket("/transcribe")
@@ -161,8 +161,9 @@ async def answer_question(question: Question):
     sessionId = question.sessionId
     question_text = question.question
     question_vector = embed_text(question_text)
-    index = pc.Index(sessionId)
+    index = pc.Index("learnit")
     res = index.query(
+        namespace = sessionId,
         vector = question_vector,
         top_k = 2,
         include_metadata=True,
