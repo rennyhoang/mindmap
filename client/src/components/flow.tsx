@@ -2,7 +2,6 @@ import { useCallback, useContext, useState, useEffect } from "react";
 import {
   ReactFlow,
   MiniMap,
-  Controls,
   Background,
   applyNodeChanges,
   applyEdgeChanges,
@@ -43,7 +42,7 @@ function Flow() {
         return;
       }
       try {
-        const response = await fetch(`http://localhost:8000/graph/`, {
+        const response = await fetch(`http://213.180.0.37:47947/graph/`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",

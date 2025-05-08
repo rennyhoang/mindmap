@@ -1,7 +1,7 @@
 import { useRef, useContext, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react";
 import { SessionContext, TranscriptContext } from "./session-context";
 
 function UploadButton() {
@@ -27,7 +27,7 @@ function UploadButton() {
     formData.append("file", file);
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/uploadfile/`, {
+      const response = await fetch(`http://213.180.0.37:47947/uploadfile/`, {
         method: "POST",
         body: formData,
       });
@@ -58,7 +58,12 @@ function UploadButton() {
         }}
         disabled={loading ? true : false}
       />
-      <Button ref={buttonRef} onClick={uploadFile} className="drop-shadow-xl/25" disabled={loading ? true : false}>
+      <Button
+        ref={buttonRef}
+        onClick={uploadFile}
+        className="drop-shadow-xl/25"
+        disabled={loading ? true : false}
+      >
         {loading ? <Loader2 className="animate-spin"></Loader2> : <></>}
         {!loading ? "Upload" : "Loading"}
       </Button>

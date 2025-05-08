@@ -64,11 +64,6 @@ class Question(BaseModel):
 
 def upload_text(session_id, text):
     index_name = "learnit" 
-    if index_name not in pc.list_indexes():
-        pc.create_index(name = index_name, dimension=1536, vector_type="dense", metric="cosine", spec=ServerlessSpec(
-            cloud="aws",
-            region="us-east-1"
-        ),)
     index = pc.Index(index_name)
     for c in chunk_text(text):
         upsert_text(index, "chunk_" + str(uuid.uuid4()), c, session_id)

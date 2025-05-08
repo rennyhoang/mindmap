@@ -19,7 +19,7 @@ function RecordButton() {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      socketRef.current = new WebSocket("ws://127.0.0.1:8000/transcribe");
+      socketRef.current = new WebSocket("ws://213.180.0.37:47947/transcribe");
 
       socketRef.current.onopen = () => {
         console.log("WebSocket connection established");
