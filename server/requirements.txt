@@ -1,0 +1,12 @@
+fastapi==0.115.12
+langchain==0.3.25
+langchain_core==0.3.59
+networkx==3.4.2
+numpy==2.2.5
+openai==1.77.0
+openai_whisper==20240930
+pinecone==6.0.2
+pydantic==2.11.4
+scipy==1.15.2
+spacy==3.8.5
+tiktoken==0.9.0
