@@ -42,7 +42,7 @@ function Flow() {
         return;
       }
       try {
-        const response = await fetch(`http://213.180.0.37:47947/graph/`, {
+        const response = await fetch(`https://213.180.0.37:47947/graph/`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",

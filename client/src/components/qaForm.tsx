@@ -30,7 +30,7 @@ export default function QaForm() {
     setAnswer("");
 
     try {
-      const res = await fetch("http://213.180.0.37:47947/qa/", {
+      const res = await fetch("https://213.180.0.37:47947/qa/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId: sessionId, question: question }),
